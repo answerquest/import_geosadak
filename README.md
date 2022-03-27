@@ -71,3 +71,41 @@ States having BLOCK_ID=0 in their block boundary shapefile:
 Punjab - 1  
 WestBengal - 3  
 I've imported these boundaries with randomly assigned block ids. We'll need to match them to actual block id.
+
+
+## DB setup in local machine using Docker
+
+```
+docker run -it --rm -p "5432:5432" \
+-v /home/nikhil/Software/docker-postgres/data:/var/lib/postgresql \
+-e DEFAULT_ENCODING="UTF8" \
+-e DEFAULT_COLLATION="en_US.UTF-8" \
+-e DEFAULT_CTYPE="en_US.UTF-8" \
+-e PASSWORD_AUTHENTICATION="md5" \
+-v /home/nikhil/Software/docker-postgres/pg_wal:/opt/postgres/pg_wal \
+-e POSTGRES_INITDB_WALDIR=/opt/postgres/pg_wal \
+-e POSTGRES_USER=YOUR_USER \
+-e POSTGRES_PASS=YOUR_PW \
+-e POSTGRES_MULTIPLE_EXTENSIONS=postgis \
+-e ALLOW_IP_RANGE='0.0.0.0/0' \
+-e POSTGRES_DBNAME=postgres,YOUR_DB \
+kartoza/postgis:14-3.2
+```
+
+Notes:
+- postgresql + postgis docker image taken from https://registry.hub.docker.com/r/kartoza/postgis , but there was one change as detailed at https://stackoverflow.com/a/64978644/4355695 to make the data persistence happen
+- assuming admin user as "YOUR_USER" and password as "YOUR_PW" and DB name as "YOUR_DB", replace accordingly at your end
+- using -v to mount the DB data on local folders, so that it's still there the next time you start this docker db
+- below command is for command prompt Terminal on Linux/Ubuntu machines, assuming docker is properly installed and the logged in user has docker access. 
+- On windows some syntax might vary; check and convert accordingly.
+- the \ at the end is just to tell the OS that there's more on the next line (newline operator in shell script)
+
+
+### Create DB tables
+Once this is started, start PgAdmin DB management tool (https://www.pgadmin.org/) 
+- connect to this DB (server: localhost, user:YOUR_USER, pw: YOUR_PW, rest all leave as-is ), 
+- get on the "YOUR_DB" DB
+- right-click, open query window
+- run the contents of schema.sql
+
+Note: PGAdmin is one way; you can also use other ways to connect to the DB and create the tables, like in a python program / notebook.

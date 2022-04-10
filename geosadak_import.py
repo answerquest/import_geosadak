@@ -4,7 +4,7 @@
 ###########################
 
 # flags - set to False to skip a section
-
+CREATE_TABLES = True
 HABITATION_FLAG = True
 ROAD_FLAG = True
 FACILITY_FLAG = True
@@ -15,13 +15,13 @@ batch = 100000
 from sqlalchemy import create_engine
 import geopandas as gpd
 import pandas as pd
-import os, datetime, time, json
+import os, datetime, time, json, sys
 import secrets
 
 ##########################
 
 ## FUNCTIONS
-def makeUID(length=6):
+def makeUID(length=7):
     return secrets.token_urlsafe(length).upper()
 
 def makeInt(x):
@@ -59,6 +59,21 @@ folder_facility = os.path.join(dataFolder,'Facilities')
 folder_proposal = os.path.join(dataFolder,'Proposals')
 folder_bound = os.path.join(dataFolder,'Bound_Block')
 
+# setup DB - skip this if already done
+if CREATE_TABLES:
+    logmessage("#"*50)
+    logmessage("Setting up DB")
+    with open(os.path.join(root,'schema.sql'),'r') as f:
+        schema = [' '.join(x.split()).strip() for x in f.read().split(';') if len(x)]
+    c = engine.connect()
+    for line in schema:
+        if len(line):
+            logmessage(line)
+            res = c.execute(line)
+    c.close()
+    logmessage("DB setup done.")
+
+###########
 
 # habitations
 if HABITATION_FLAG:
@@ -227,7 +242,7 @@ if BLOCK_FLAG:
 
                 else:
                     # handling edge cases where zero block_id encountered in shapefile
-                    BLOCK_ID = makeUID(3)
+                    BLOCK_ID = makeUID()
                     i2 = f"""insert into block ("BLOCK_ID","DISTRICT_ID","STATE_ID",geometry) values
                     ('{BLOCK_ID}','{makeInt(row['DISTRICT_I'])}','{makeInt(row['STATE_ID'])}', 
                     ST_GeomFromText('{shape}',4326) ) """

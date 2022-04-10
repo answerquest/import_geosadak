@@ -34,12 +34,12 @@ docker run -it --rm -p "5432:5432" \
 -e POSTGRES_USER=user1 \
 -e POSTGRES_PASS=password1 \
 -e POSTGRES_DBNAME=postgres,geosadak \
--v /home/nikhil/Software/docker-postgres/data:/var/lib/postgresql \
+-v /DISKPATH/docker-postgres-geosadak/data:/var/lib/postgresql \
+-v /DISKPATH/docker-postgres-geosadak/pg_wal:/opt/postgres/pg_wal \
 -e DEFAULT_ENCODING="UTF8" \
 -e DEFAULT_COLLATION="en_US.UTF-8" \
 -e DEFAULT_CTYPE="en_US.UTF-8" \
 -e PASSWORD_AUTHENTICATION="md5" \
--v /home/nikhil/Software/docker-postgres/pg_wal:/opt/postgres/pg_wal \
 -e POSTGRES_INITDB_WALDIR=/opt/postgres/pg_wal \
 -e POSTGRES_MULTIPLE_EXTENSIONS=postgis \
 -e ALLOW_IP_RANGE='0.0.0.0/0' \

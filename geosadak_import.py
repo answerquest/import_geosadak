@@ -4,12 +4,12 @@
 ###########################
 
 # flags - set to False to skip a section
-CREATE_TABLES = True
-HABITATION_FLAG = True
+CREATE_TABLES = False
+HABITATION_FLAG = False
 ROAD_FLAG = True
 FACILITY_FLAG = True
 PROPOSAL_FLAG = True
-BLOCK_FLAG = True
+BLOCK_FLAG = False
 batch = 100000
 
 from sqlalchemy import create_engine

@@ -66,3 +66,4 @@ CREATE TABLE block (
 	"STATE_NAME" VARCHAR(50) NULL,
 	geometry GEOMETRY (GEOMETRY, 4326) NULL
 );
+CREATE INDEX block_geom_1 ON block USING GIST (geometry);

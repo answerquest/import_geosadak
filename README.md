@@ -2,6 +2,35 @@
 
 Importing pmgsy-geosadak data (https://github.com/datameet/pmgsy-geosadak) into a PostGreSQL database (with PostGIS extn enabled)
 
+
+
+## Some data inconsistencies found
+I found some data inconsistenices in the March 2022 release during the course of importing, which is why a proper python program and separate unique primary keys in the DB were necessary to handle these and not error out during data import.
+
+1. States having BLOCK_ID values in boundaries shapefile which does not have matching Master data entry:  
+TamilNadu - 3  
+JammuAndKashmir - 3  
+These blocks do have road data etc but no entry in master data excel: **8108, 8105, 8106, 8063, 8034, 8041**
+
+2. States having BLOCK_ID=0 in their block boundary shapefile:  
+Punjab - 1  
+WestBengal - 3  
+I've imported these boundaries with randomly assigned block ids. We'll need to match them to actual block id.
+
+3. Following 8 habitation ids have null district id, zero block id and don't seem to have proper lat-longs. They are all under state Maharashtra (21):  
+"1229800", "1229524", "1229611", "1229553", "1229557", "1229780", "1240063", "1240589", "1229803"  
+Query:   
+```select id, "STATE_ID", "DISTRICT_I", "HAB_ID", ST_AsText(geometry) from habitation where "BLOCK_ID" = 'ZEROBLOCK'
+```
+
+4. 4230 Habitation entries have null district id, across 21 states.
+Queries:  
+```
+select id, "STATE_ID", "DISTRICT_I", "HAB_ID", ST_AsText(geometry) from habitation where "DISTRICT_I" is null;
+select "STATE_ID", count(*) as count from habitation where "DISTRICT_I" is null group by  "STATE_ID" order by count desc
+```
+
+
 ## Steps
 
 1. Clone the data repo, keep under this folder
@@ -98,29 +127,6 @@ exit
 exit
 ```
 
-## Some data inconsistencies found:
-1. States having BLOCK_ID values in boundaries shapefile which does not have matching Master data entry:  
-TamilNadu - 3  
-JammuAndKashmir - 3  
-These blocks do have road data etc but no entry in master data excel: **8108, 8105, 8106, 8063, 8034, 8041**
-
-2. States having BLOCK_ID=0 in their block boundary shapefile:  
-Punjab - 1  
-WestBengal - 3  
-I've imported these boundaries with randomly assigned block ids. We'll need to match them to actual block id.
-
-3. Following 8 habitation ids have null district id, zero block id and don't seem to have proper lat-longs. They are all under state Maharashtra (21):  
-"1229800", "1229524", "1229611", "1229553", "1229557", "1229780", "1240063", "1240589", "1229803"  
-Query:   
-```select id, "STATE_ID", "DISTRICT_I", "HAB_ID", ST_AsText(geometry) from habitation where "BLOCK_ID" = 'ZEROBLOCK'
-```
-
-4. 4230 Habitation entries have null district id, across 21 states.
-Queries:  
-```
-select id, "STATE_ID", "DISTRICT_I", "HAB_ID", ST_AsText(geometry) from habitation where "DISTRICT_I" is null;
-select "STATE_ID", count(*) as count from habitation where "DISTRICT_I" is null group by  "STATE_ID" order by count desc
-```
 
 ### Using PGAdmin tool to manage the DB
 Once this is started, start PgAdmin DB management tool (https://www.pgadmin.org/) 

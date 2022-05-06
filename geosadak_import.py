@@ -105,6 +105,16 @@ if HABITATION_FLAG:
             gdf1['id'] = gdf1[col].apply(lambda x: makeUID())
             logmessage(f"{file1} {len(gdf1)} rows")
             gdf1.to_postgis('habitation',engine, if_exists='append', index=False, chunksize=batch)
+    
+    
+    # Data-cleaning: there are cases where lat, lon are big negative numbers - invalid lat-longs in the data dumps. 
+    # Have to remove those entries so they don't mess up other flows
+    d2 = f"delete from habitation where ST_Y(geometry) < 0"
+    c = engine.connect()
+    res = c.execute(d2)
+    logmessage(f"{res.rowcount} invalid lat-long rows deleted in habitation table")
+    c.close()
+
     end = time.time()
     logmessage(f"Habitations imported in {round(end-start,1)} secs")
 

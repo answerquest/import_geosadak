@@ -4,13 +4,19 @@
 ###########################
 
 # flags - set to False to skip a section
-CREATE_TABLES = False
-HABITATION_FLAG = False
+CREATE_TABLES = True
+HABITATION_FLAG = True
 ROAD_FLAG = True
 FACILITY_FLAG = True
 PROPOSAL_FLAG = True
-BLOCK_FLAG = False
+BLOCK_FLAG = True
 batch = 100000
+
+HABITATION_CLEAR = True
+ROAD_CLEAR = True
+FACILITY_CLEAR = True
+PROPOSAL_CLEAR = True
+BLOCK_CLEAR = True
 
 from sqlalchemy import create_engine
 import geopandas as gpd
@@ -82,11 +88,12 @@ if HABITATION_FLAG:
     filesList = [x for x in os.listdir(folder_habitation) if x.lower().endswith('.zip') ]
     logmessage(f"habitation: {filesList}")
 
-    d1 = "delete from habitation"
-    c = engine.connect()
-    res = c.execute(d1)
-    logmessage(f"{res.rowcount} rows deleted in habitation table")
-    c.close()
+    if HABITATION_CLEAR:
+        d1 = "delete from habitation"
+        c = engine.connect()
+        res = c.execute(d1)
+        logmessage(f"{res.rowcount} rows deleted in habitation table")
+        c.close()
 
     for file1 in filesList:
         gdf1 = gpd.read_file(os.path.join(folder_habitation,file1)).fillna('')
@@ -110,11 +117,12 @@ if ROAD_FLAG:
     filesList = [x for x in os.listdir(folder_road) if x.lower().endswith('.zip') ]
     logmessage(f"road: {filesList}")
 
-    d1 = "delete from road"
-    c = engine.connect()
-    res = c.execute(d1)
-    logmessage(f"{res.rowcount} rows deleted in road table")
-    c.close()
+    if ROAD_CLEAR:
+        d1 = "delete from road"
+        c = engine.connect()
+        res = c.execute(d1)
+        logmessage(f"{res.rowcount} rows deleted in road table")
+        c.close()
 
     for file1 in filesList:
         gdf1 = gpd.read_file(os.path.join(folder_road,file1)).fillna('')
@@ -139,11 +147,12 @@ if FACILITY_FLAG:
     filesList = [x for x in os.listdir(folder_facility) if x.lower().endswith('.zip') ]
     logmessage(f"facility: {filesList}")
 
-    d1 = "delete from facility"
-    c = engine.connect()
-    res = c.execute(d1)
-    logmessage(f"{res.rowcount} rows deleted in facility table")
-    c.close()
+    if FACILITY_CLEAR:
+        d1 = "delete from facility"
+        c = engine.connect()
+        res = c.execute(d1)
+        logmessage(f"{res.rowcount} rows deleted in facility table")
+        c.close()
 
     for file1 in filesList:
         gdf1 = gpd.read_file(os.path.join(folder_facility,file1)).fillna('')
@@ -168,11 +177,12 @@ if PROPOSAL_FLAG:
     filesList = [x for x in os.listdir(folder_proposal) if x.lower().endswith('.zip') ]
     logmessage(f"proposal: {filesList}")
 
-    d1 = "delete from proposal"
-    c = engine.connect()
-    res = c.execute(d1)
-    logmessage(f"{res.rowcount} rows deleted in proposal table")
-    c.close()
+    if PROPOSAL_CLEAR:
+        d1 = "delete from proposal"
+        c = engine.connect()
+        res = c.execute(d1)
+        logmessage(f"{res.rowcount} rows deleted in proposal table")
+        c.close()
 
 
     for file1 in filesList:
@@ -197,10 +207,11 @@ if BLOCK_FLAG:
     logmessage("Blocks master and boundaries")
     start = time.time()
 
-    d1 = "delete from block"
-    c = engine.connect()
-    res = c.execute(d1)
-    logmessage(f"{res.rowcount} rows deleted in block table")
+    if BLOCK_CLEAR:
+        d1 = "delete from block"
+        c = engine.connect()
+        res = c.execute(d1)
+        logmessage(f"{res.rowcount} rows deleted in block table")
 
     file1 = 'MasterData.xls'
     df1 = pd.read_excel(os.path.join(dataFolder,file1), dtype=str)

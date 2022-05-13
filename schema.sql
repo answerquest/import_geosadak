@@ -11,6 +11,8 @@ CREATE TABLE habitation (
 	"TOT_POPULA" VARCHAR(10) NULL,
 	geometry GEOMETRY(POINT,4326) NULL
 );
+CREATE INDEX habitation_geom_1 ON habitation USING GIST (geometry);
+
 
 DROP TABLE IF EXISTS road;
 CREATE TABLE road (
@@ -25,6 +27,8 @@ CREATE TABLE road (
 	"RoadOwner" VARCHAR(10) NULL,
 	geometry GEOMETRY(LINESTRING,4326) NULL
 );
+CREATE INDEX road_geom_1 ON road USING GIST (geometry);
+
 
 DROP TABLE IF EXISTS facility;
 CREATE TABLE facility (
@@ -38,6 +42,7 @@ CREATE TABLE facility (
 	"FAC_CATEGO" VARCHAR(50) NULL,
 	geometry GEOMETRY(POINT,4326) NULL
 );
+CREATE INDEX facility_geom_1 ON facility USING GIST (geometry);
 
 
 DROP TABLE IF EXISTS proposal;
@@ -54,6 +59,7 @@ CREATE TABLE proposal (
 	"IMS_BATCH" VARCHAR(10) NULL,
 	geometry GEOMETRY(GEOMETRY, 4326) NULL
 );
+CREATE INDEX proposal_geom_1 ON proposal USING GIST (geometry);
 
 
 DROP TABLE IF EXISTS block;
